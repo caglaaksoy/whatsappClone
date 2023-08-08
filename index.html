@@ -33,7 +33,7 @@
             </div>
 
             <div class="chatList">
-                <div class="block active">
+                <div class="block active" data-chat-id="1">
                     <div class="imgBox">
                         <img src="user.png" alt="">
                     </div>
@@ -47,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="block unread">
+                <div class="block unread" data-chat-id="2">
                     <div class="imgBox">
                         <img src="user2.jpeg" alt="">
                     </div>
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="block unread">
+                <div class="block unread" data-chat-id="3">
                     <div class="imgBox">
                         <img src="user3.jpeg" alt="">
                     </div>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="block unread">
+                <div class="block unread" data-chat-id="4">
                     <div class="imgBox">
                         <img src="user4.jpeg" alt="">
                     </div>
@@ -92,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="block unread">
+                <div class="block unread" data-chat-id="5">
                     <div class="imgBox">
                         <img src="user5.png" alt="">
                     </div>
@@ -131,9 +131,6 @@
                 <!-- Mesaj içeriği burada görüntülenecek -->
             </div>
 
-          
-
-
             <div class="chatBox">
                 <div class="message my_message">
                     <p>hi <br> <span>17.02</span> </p>
@@ -142,6 +139,7 @@
                     <p>hello <br> <span>17.02</span> </p>
                 </div>                
             </div>
+            
             <div class="chatInput">                
                 <div >
                     <input type="text" placeholder="Mesajınızı buraya yazın"> 
@@ -156,60 +154,79 @@
 
 
 <script>
-// Sol tarafta bulunan mesajları seçin
-const messageBlocks = document.querySelectorAll('.chatList .block');
 
-// Sağ tarafta mesaj içeriğini ve gönderen adını göstereceğimiz alanları seçin
-const chatContent = document.querySelector('.chatBox');
-const senderNameElement = document.getElementById('senderName');
-const senderPhotoElement = document.getElementById('senderPhoto');
-const chatInput = document.querySelector('.chatInput input');
-const sendButton = document.querySelector('.chatInput i.fa-paper-plane');
 
-// Her bir mesaj bloğuna tıklama olay dinleyicisi ekleyin
-messageBlocks.forEach((block) => {
-    block.addEventListener('click', () => {
-        // Tıklanan mesajın içeriğini, gönderen adını ve profil fotoğrafını alın
+    const messageBlocks = document.querySelectorAll('.chatList .block');
+    const chatContent = document.querySelector('.chatBox');
+    const senderNameElement = document.getElementById('senderName');
+    const senderPhotoElement = document.getElementById('senderPhoto');
+    const chatInput = document.querySelector('.chatInput input');
+    const sendButton = document.querySelector('.chatInput i.fa-paper-plane');
+    const chatContents = {}; // Sohbet içeriklerini saklamak için nesne
+  
+    // Varsayılan olarak ilk sohbetin içeriğini ve kişisini görüntüle
+    const defaultChatBlock = document.querySelector('.block.active');
+    const defaultChatId = defaultChatBlock.getAttribute('data-chat-id');
+    const defaultMessageContent = defaultChatBlock.querySelector('.message_p p').textContent;
+    const defaultSenderName = defaultChatBlock.querySelector('.details .listHead h4').textContent;
+    const defaultSenderPhoto = defaultChatBlock.querySelector('.imgBox img').src;
+  
+    chatContents[defaultChatId] = `
+        <div class="message frnd_message">
+            <p>${defaultMessageContent} <br> <span>17.02</span></p>
+        </div>
+    `;
+  
+    chatContent.innerHTML = chatContents[defaultChatId];
+    senderNameElement.textContent = defaultSenderName;
+    senderPhotoElement.src = defaultSenderPhoto;
+  
+    messageBlocks.forEach((block) => {
+      const chatId = block.getAttribute('data-chat-id');
+  
+      block.addEventListener('click', () => {
         const messageContent = block.querySelector('.message_p p').textContent;
         const senderName = block.querySelector('.details .listHead h4').textContent;
-        const senderPhoto = block.querySelector('.imgBox img').src; // Doğru seçici ile profil fotoğrafını al
-
-        // Mesaj içeriğini sağ tarafta gösterilen alana yazdırın
-        chatContent.innerHTML = `
+        const senderPhoto = block.querySelector('.imgBox img').src;
+  
+        chatContents[chatId] = `
             <div class="message frnd_message">
                 <p>${messageContent} <br> <span>17.02</span></p>
             </div>
         `;
-
-        // Gönderen adını ve profil fotoğrafını sağ tarafta gösterilen alanları güncelleyerek yazdırın
+  
+        chatContent.innerHTML = chatContents[chatId];
         senderNameElement.textContent = senderName;
         senderPhotoElement.src = senderPhoto;
+      });
     });
-});
-
-// Gönderme düğmesine tıklama olay dinleyicisi ekleyin
-sendButton.addEventListener('click', sendMessage);
-
-// Klavyedeki Enter tuşuna basma olayını dinle
-chatInput.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
+  
+    sendButton.addEventListener('click', sendMessage);
+  
+    chatInput.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
         sendMessage();
-    }
-});
-
-function sendMessage() {
-    const newMessage = chatInput.value;
-
-    if (newMessage.trim() !== '') {
+      }
+    });
+  
+    function sendMessage() {
+      const newMessage = chatInput.value;
+  
+      if (newMessage.trim() !== '') {
         chatContent.innerHTML += `
             <div class="message my_message">
                 <p>${newMessage} <br> <span>17.02</span></p>
             </div>
         `;
-
+  
         chatInput.value = '';
+      }
     }
-}
-
-
 </script>
+
+
+
+
+  
+
+
